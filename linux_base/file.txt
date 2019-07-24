@@ -1,0 +1,127 @@
+一 操作文件
+1. 创建文件
+    touch a.txt
+
+2. 删除文件
+    rm -rf a.txt
+    -r 递归删除目录下面的文件以及子目录文件
+    -f 强制删除，忽略不存在的文件，从不给出提示
+
+3. 修改文件名
+    mv a.txt b.txt (b.txt 是修改后的文件名)
+
+4. 查看文件内容
+    cat a.txt
+    查看文件的前三行
+    cat a.txt | head -3   
+    查看文件的后四行
+    cat a.txt | tail -3
+
+    搜索  vi xxx   输入想要查询的内容 /xxx
+4.1 查找文件里面内容   找到httpd.conf 里面有listen
+    cat httpd.conf | grep listen
+    cat httpd.conf | grep -ignore listen   /  
+    cat httpd.conf | grep -i listen  忽略大小写
+
+    实例: 网卡配置
+    find / name httpd.conf
+    find /etc name httpd.conf
+
+5. 复制文件 
+    cp a.txt  b.txt (b.txt 是复制后的文件名)
+
+6. 移动文件
+    mv a.txt b.txt (b.txt 是移动后的文件名)
+
+7. 编辑文件
+    vi a.txt
+
+8. 批量创建和删除文件
+    touch file{1..10}.txt
+    rm -rf file{1..10}.txt
+
+9. 查找文件
+    find / -name a.txt
+
+
+二 操作文件夹
+1. 创建目录
+    mkdir dir1 dir2
+
+2. 删除目录
+    rm -rf dir1 
+    -r 递归删除目录下面的文件以及子目录文件
+    -f 强制删除，忽略不存在的文件，从不给出提示
+
+3. 重命名&移动文件
+    mv dir1 dir2
+
+4. 树状查看
+    tree (yum search tree)
+
+5. 文件显示类型
+    -rw-r—r— "-“开头的都是普通文件;
+    drw-r—r— "d"开头的是目录文件;
+    brw-r—r— "b"开头的文件都是块设备文件;
+    crw-r—r— "c"开头的文件都是字符设备文件;
+    srw-r—r— "s"开头的文件都是 socket 文件; (e.g. srwxrwxrwx 1 mysql mysql 0 Sep 9 13:49 mysql.sock)
+    prw-r—r— "p"开头的文件都是管道文件; lrw-r—r— "l"开头的文件都是软链接文件;
+
+
+三 打包压缩 别名管理
+1. 制作zip文件
+    zip -r xx.zip xx/
+    -r 递归 表示将指定的目录下的所有子目录以及文件一起处理
+
+    解压 unzip xx.zip
+
+    查看zip文件中有那些东西
+    unzip -l public xx.zip
+
+    解压到指定 wwwroot 目录下
+    unzip xx.zip -d wwwroot/
+
+2.  制作压缩tar文件
+    tar cvf xx.tar xx/
+
+    制作 gz 包
+    tar czvf public.tar.gz public
+
+    解压 gz 包
+    tar xzvf public.tar.gz
+
+    查看 gz 包
+    tar tf public.tar.gz
+
+    解压 tar 包
+    tar xvf wwwroot.tar
+
+    参数:
+    特别注意，在参数的下达中， c/x/t 仅能存在一个!不可同时存在!因为不可能同时压 缩与解压缩
+    -c :建立一个压缩档案的参数指令(create 的意思) 
+    -x :解开一个压缩档案的参数指令!
+    -t :查看 tarfile 里面的档案!
+    -z :是否同时具有 gzip 的属性?亦即是否需要用 gzip 压缩?  
+    -j :是否同时具有 bzip2 的属性?亦即是否需要用 bzip2 压缩?
+    -v :压缩的过程中显示档案!这个常用，但不建议用在背景执行过程! 
+    -f :使用档名，请留意，在 f 之后要立即接档名喔!不要再加参数
+
+3.  xz 压缩包
+    对于 xz 这个压缩相信很多人陌生，但 xz 是绝大数 linux 默认就带的一个压缩工具，xz
+格式比 gz 还要小。
+    制作:
+    a. tar cvf xx.tar xx/   制作tar在先
+    b. xz xx.tar  //将 xxx.tar 压缩成为 xxx.tar.xz 删除原来的 tar 包
+    c. xz -k xx.tar //将 xxx.tar 压缩成为 xxx.tar.xz 保留原来的 tar 包
+    解压:
+    a. xz -d xx.tar.xz //先解压 xz, 删除原来的 xz 包, 变成 xx.tar
+    b. tar xvf xx.tar //再解压 tar
+
+四  别名管理
+1. 添加别名
+    alias vif = "vi /ect/sysconfig/network-scripts/ifcfg-ens33";
+2. 删除别名
+    unalias vif
+3. 查看别名列表
+    alias
+

@@ -1,0 +1,66 @@
+一  linux 常用命令
+    1、init 0 关机
+    2、init 6 重启
+    3、ls 、 ls -l 、 ll 列出出当前目录下的文件 4、cd 切换目录
+    5、pwd
+    7、cd -
+    8、ctrl+c
+    9、ctrl+l
+    10、ip addr / ifconfig 查看网卡信息 11、ping 127.0.0.1 看网络是否通畅
+        ip addr show
+    11、ls | grep xxx 查找相应的文件
+    12  netstat -tunpl  查看那些端口在使用
+
+二  linux shell 命令
+    1.tab 补全
+        命令+(1 次)tab
+        命令+(2 次)tab
+    2、上下键盘 查看最近的历史命令
+    3.history
+        查看命令历史
+            !22
+            调用历史中编号为 22 的命令
+    4.!h
+        调用历史中最后一次以 h 开头的命令
+    5.获取帮助:
+        ls --help
+        man ls
+
+    6.实例介绍
+        修改网络
+        cd /etc/sysconfig/network-scripts/
+        vi ifcfg-ens33
+        ONBOOT="no" 修改 ONBOOT="yes"
+            
+三  目录结构
+    home 目录下创建新用户
+    a. useradd zhangsan        创建用户
+       passwd zhangsan 123456  新增密码
+
+    root 目录
+        linux 超级权限 root 目录
+    home 目录
+        系统默认的用户主目录，例如刚创建的 zhangsan 用户
+    bin  目录
+        存放系统所需要的重要命令，比如文件或目录的操作命令 ls, mkdir等，
+        另外usr/bin 也放来一些系统命令，这些命令对应者文件都是可执行的
+    sbin 目录
+        存放只有 root 超级管理员才能执行的程序
+    boot 目录   
+        存放着 linux 启动时内核及引导系统程序所需要的核心文件， 内核文件和 gub 系统引导管理器都位于此目录
+    dev  目录
+        存放着 linux 系统下的设备文件， 比如光驱等
+    etc  目录
+        存放系统的配置文件， 作为一些软件启动时默认配置文件读取的目录， 比如 /etx/fstal 存放系统分析信息
+    mnt  目录
+        临时文件挂载目录，也可以说是测试目录
+    opt  目录
+        第三方软件存放目录
+    media目录   
+        即插即用型设备挂载点，光盘默认挂载点，通常光盘挂载于 /mnt/cdrom下
+    tmp  目录
+        临时文件夹
+    usr  目录
+        启用程序存放目录， 安装 linux 软件包是默认安装到 usr/local 目录下
+    var  目录
+        目录经常变动， /var/log存放系统日志，/var/log 存放系统文件夹

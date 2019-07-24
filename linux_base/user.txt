@@ -1,0 +1,95 @@
+    查看所有用户    
+    跟目录下执行    cat etc/passwd
+
+一 用户
+1. 添加用户
+    useradd lisi
+
+2. 设置密码
+    passwd lisi
+    输入密码
+
+3. 删除用户
+    userdei -r lisi
+    -r 递归删除目录下面的文件以及子目录文件
+
+
+文件权限说明: https://blog.csdn.net/u014316462/article/details/52241685
+二 权限
+1. 让其他用户对 mnt 没有如何权限
+   chmod o-r, o-w, o-x mnt
+
+2. 在mnt下执行 ll
+drwxr-xr-x.     2       root        root    6  4月  2018        mnt
+    d       代表文件,文件夹
+    rwx     当前用户对 mnt 有读写执行权限                u
+    r-x     当前用户对组对 mnt 有读执行权限，没有写权限     g
+    r-x     其他用户对组对 mnt 有读执行权限，没有写权限     o
+
+用户:
+    所有者      user        u
+    所属组      group       g
+    其他用户    other       o
+    所有用户    all         u+g+o=a
+目录的 rwx:
+    r   查看目录里面的文件       4
+    w   在目录里面创建或删除文件  2
+    x   切换目录               1 
+文件的 rwx:
+    r   查看文件内容
+    w   在文件里面写内容
+    x   执行该文件(文件不是普通文件，是脚本或程序)
+
+三  用户权限分配
+    +增加权限   -删除权限
+    chmod   u+x my.sh   给当前用户分配执行 my.sh 的权限
+    chmod   o+r,o+w file.txt    给其他用户分配对 file.txt 的读写权限
+    chmod   o+r,o+w,o+x mnt     给其他用户分配对 mnt 目录的执行，读取，写入的权限
+    chmod   -R o+r,o+w,o+x mnt  修改 mnt 目录下的所有文件权限为可读，可写，可执行
+    chmod 755 file
+    chmod -R 777 wwwroot/   修改 wwwroot 目录下的所有文件权限为可读，可写，可执行
+        -R 递归分配权限
+数字演示:
+    通过4、2、1的组合，得到以下几种权限：
+        0（没有权限）；
+        4（读取权限）；
+        5（4+1 | 读取+执行）；
+        6（4+2 | 读取+写入）；
+        7（4+2+1 | 读取+写入+执行）
+    以755为例：
+        1-3位7等于4+2+1，rwx，所有者具有读取、写入、执行权限；
+        4-6位5等于4+1+0，r-x，同组用户具有读取、执行权限但没有写入权限；
+        7-9位5，同上，也是r-x，其他用户具有读取、执行权限但没有写入权限。
+
+    实例1. 让其他人对 mnt 没有任何权限
+        chmod o-r,o-w,o-x mnt/
+    实例2. 让所有人对 test.sh 有 x 权限
+        chmod a+x test.sh
+    实例3. 让所有用户对 mnt 以及 mnt里面对所有文件及文件夹有 w 权限
+        chmod -R a+w mnt/
+    实例4   让zhangsan对 mnt 目录具有 r 权限，
+           让lisi对 mnt 目录具有 rw 权限
+           让xiaoming对 mnt 目录具有 rwx 权限
+           setfacl -m u:zhangsan:r mnt
+           setfacl -m u:lisi:rw mnt
+           setfacl -m u:xiaoming:rwx mnt
+
+四  用户权限ACL
+    1. -m 修改
+        setfacl -m u:zhangsan:r mnt
+    2. 查看 mnt 拥有对 ACL 权限
+        getfacl mnt
+    3. 删除 mnt 拥有的 ACL 权限
+        setfacl -x u:zhangsan mnt
+    4. 删除 mnt 上所设置的所有 ACL 权限
+        setfacl -b mnt/
+
+五  用户权限管理 visudo
+    实例: 给 lisi 分配 useradd 权限
+    root 用户给其他用户 分配 sbin 的权限
+    1. 执行 
+        visudo 
+    2. 在 %users localhost=/sbin/shutdown -n now 后面添加 权限分配
+        %lisi localhost=/usr/sbin/useradd 
+    3. sudo useradd lisi
+        确认输入密码

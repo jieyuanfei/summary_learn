@@ -1,0 +1,54 @@
+linix 安装 mongodb
+官网安装地址:
+https://docs.mongodb.com/manual/tutorial/install-mongodb-enterprise-on-red-hat/
+
+1.  在路径/etc/yum.repos.d/下创建文件 mongodb-org-4.0.repo
+    cd /etc/yum.repos.d/
+    vi mongodb-enterprise.repo
+    写入文件
+        [mongodb-enterprise]
+        name=MongoDB Enterprise Repository
+        baseurl=https://repo.mongodb.com/yum/redhat/$releasever/mongodb-enterprise/4.0/$basearch/
+        gpgcheck=1
+        enabled=1
+        gpgkey=https://www.mongodb.org/static/pgp/server-4.0.asc
+
+2.  执行 yum命令
+    yum install -y mongodb-enterprise
+
+    启动 mongodb
+    systemctl start mongod
+
+3.  查看安装的mongodb软件
+    yum list installed | grep mongo*
+
+    rpm -qa 查看计算机安装的所有软件
+    rpm -aq | grep mongo* 查看安装的mongodb软件
+
+4.  查看 mongodb 是否开机就启动
+    systemctl list-unit-files | grep enable | grep mongod
+
+5.  远程连接 mongodb
+    a. 查看 mongodb是否是启动状态
+        systemctl is-active mongod  (active是启动状态)
+    b. 查看 MongoDB 配置文件
+        find / -name mongod.conf
+    c. 编辑配置文件
+        vi /ect/mongod.conf
+        远程连接把 bindIp: 127.0.0.1 换成0.0.0.0
+    d. 重启
+        systemctl restart mongod
+    e. 配置端口，永久开放端口
+        firewall-cmd --zone=public --add-port=27017/tcp --permanent ; 
+        a(–permanent 永久生效，没有此参数重启后 失效)
+    f.  查看端口列表
+        firewall-cmd --zone=public --list-port  
+    h.  重新开启
+        firewall-cmd --reload
+
+6.  停止服务
+    systemctl stop mongod
+
+7.  卸载 mongodb
+    yum remove -y $(rpm -qa | grep mongodb-org)
+

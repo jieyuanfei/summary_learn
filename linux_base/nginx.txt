@@ -1,0 +1,38 @@
+一  准备
+    yum 的仓库地址
+    根目录下
+    cd /etc/yum.repos.d
+    如果出现 nginx.repo 则源安装成功
+
+二  安装 nginx 
+1. 源地址: 
+    http://nginx.org/packages/centos/7/noarch/RPMS/nginx-release-centos-7-0.el7.ngx.noarch.rpm
+
+2. 查看是否安装 nginx
+    rpm -qa | grep nginx
+
+3. 把 nginx 安装 到对应的 源中 
+   sudo rpm -ivh http://nginx.org/packages/centos/7/noarch/RPMS/nginx-release-centos-7-0.el7.ngx.noarch.rpm
+
+
+4. 查看 nginx 是否配置成功
+   根目录下
+   cd etc/yum.repos.d/
+   如果出现 nginx.repo 则源安装成功
+
+5. 安装 nginx
+   yum install -y nginx
+
+6.   启动 nginx
+    systemctl start nginx
+    service start nginx
+ 
+7.  nginx 配置文件
+    find / -name  nginx.conf
+
+    // 在文件中看到 include /etc/nginx/conf.d/*.conf
+
+    cd /etc/nginx/conf.d
+
+    // 看到 root    /usr/share/nginx/html 
+    默认启动文件

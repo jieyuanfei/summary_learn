@@ -1,0 +1,21 @@
+    安装
+    yum install -y httpd
+
+    查看是否安装成功
+    rpm -ql httpd
+
+    启动
+    service httpd start
+
+    关闭防火墙
+    systemctl stop firewalld 
+
+    curl http://127.0.0.1   查看对应 httpd 默认文件
+
+    查看配置文件
+    find / -name httpd.conf
+
+    查看默认静态文件, (apache默认配置文件)
+    vi /etc/httpd/conf/httpd.conf | grep - i DocumentRoot
+
+    

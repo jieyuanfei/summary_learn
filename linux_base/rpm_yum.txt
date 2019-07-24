@@ -1,0 +1,25 @@
+一 rpm 包管理
+1. rpm -ql xxx 查看有没有安装
+
+2. rpm -e xxx 卸载包
+
+二 yum 包管理
+1. yum -y remove xxx 卸载
+
+2. yum search xxx 搜索包
+
+3. yum info xx 查看包对具体信息(那个公司出品对。。。)
+
+4. wget https://xx 从远程服务器下载包
+
+5.  psmisc
+    pstree 查看进程
+
+6. systemctl stop firewalld 关闭防火墙
+
+   apache 启动
+
+7. find / -name httpd.conf     apache 查看httpd.conf 在哪里
+
+8. cat /etc/httpd/conf/httpd.conf | grep -i documentroot
+   该文件下查看 documentroot 具体位置

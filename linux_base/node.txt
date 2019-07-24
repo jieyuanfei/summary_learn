@@ -1,0 +1,97 @@
+准备: 
+    1. 先安装源代码编译的软件 gcc，make，openssl 如下:
+    yum install -y gcc make gcc-c++ openssl-devel 
+    检查系统中是否已经安装 gcc: rpm -qa | grep gcc / rpm -ql gcc
+    
+
+一  linix 源代码安装 node
+1. 生成编译配置文件(Makefile)
+2. 开始编译(make)
+3. 开始安装(make install)
+
+解压 node-v10.13.0.tar
+cd opt/
+1. tar xzvf node-v10.13.0.tar
+一般直接安装在 /usr/local 这样不用去配置环境变量
+
+2. 建议 把node-v10.13.0.tar复制到 /usr/local文件下
+步骤
+    a. cd /usr/local
+    b. mkdir nodejs
+    c. cd /opt
+    d. cp -rf node-v10.13.0/* /usr/local/nodejs
+    e. ./configure (生成编译时的配置文件)
+    f. make -j4  (-j4充分利用计算机资源)
+    g. make install 
+
+
+二  linix 源代码安装 apache
+1.  a. tar xzvf httpd-2.2.9.tar.gz 解压
+    b. cd httpd-2.2.9
+    c. ./configure --prefix=/usr/local/apache2 --sysconfdir=/usr/local/apache2/etc --with-included-apr --enable-dav
+            --enable-so --enable-delfate=shared --enable-expires=shared --enable-rewrite=shared 
+    d. make
+    e. make install
+
+    启动 Apache 测试:
+    /usr/local/apache2/bin/apachectl start
+
+    查看进程:
+    ps -le | grep httpd
+
+2.  查看默认渲染文件
+    a. find / -name httpd.conf 查看配置文件
+    通过查看httpd.conf 来查看她默认渲染的html文件
+
+    b. cat /usr/local/apache2/etc/httpd.conf | grep -i documentroot
+    可以看到 “/usr/local/apache2/htdocs”    表示默认文件在htdocs”这里面
+
+    c. cd /usr/local/apache2/htdocs 
+       vi index.html 来修改html里面内容 即可
+
+3.  卸载 apache 源代码包
+    a. 结束进程
+        pstree | grep httpd
+        pkill httpd
+    b. 删除源代码包
+        cd /usr/local
+        rm -rf apache/
+
+4. 卸载 node
+    a. cd /usr/local
+        rm -rf nodejs/
+        
+    b. find / -name node 查看是否删除干净
+        cd /usr/local/bin   (npm node )
+        rm -rf npm node 
+
+
+三 node 二进制安装
+    1. 官网下载 node-v10.13.0-linux-x64.tar.xz
+
+    2. 解压xz包
+       xz -d node-v10.13.0-linux-x64.tar.xz
+       解压tar包
+       tar xvf node-v10.13.0-linux-x64.tar
+    
+    3. cd /usr/local
+        mkdir nodejs
+       cd opt/
+        cp -rf node-v10.13.0-linux-x64/* /usr/local/nodejs
+    
+    4. 修改环境变量
+        vi  /etc/profile
+        最后添加
+        export NODE_HOME=/usr/local/nodejs/bin
+        export PATH=$NODE_HOME:$PATH
+    
+    5. cd /
+        source /etc/profile
+
+
+四 包的安装顺序
+    a. yum
+    b. 二进制:
+    c. 源代码包
+
+五 ECS home/react/test_react项目

@@ -1,0 +1,50 @@
+1.  远程安装 mysql 源
+    rpm -ivh http://dev.mysql.com/get/mysql80-community-release-el7-3.noarch.rpm
+
+    看一下 mysql 是否安装成功
+    cd /etc/yum.repos.d/
+    vi mysql-community.repo
+    查看列表
+        enabled=0 默认是未启用
+        enabled=1 默认是启用
+
+2.  安装 mysql
+    yum install -y mysql-server
+
+3.  启动 MySQL
+    systemctl start mysqld
+
+4.  查看机器上面是否安装过mysql
+    rpm -qa | grep mysql*
+    yum list installed | grep mysql*
+
+5.  配置 MySQL 服务开机启动
+    systemctl enable mysqld
+
+6.  修改 mysql 密码	
+    1. 查看mysql默认安装以后的密码
+    mysql 安装完成之后，在/var/log/mysqld.log 文件中给 root 生成了一个默认密码
+    cat mysqld.log | grep password 查看默认密码
+
+    2. mysql -u root -p    输入密码
+
+    3. 修改密码语句
+    ALTER USER 'root'@'localhost' IDENTIFIED BY 'MyNewPass4!';
+
+7.  默认情况mysql对密码要求非常严格
+    修改密码策略 在/etc/my.cnf 文件添加 validate_password_policy 配置，指定密码策略
+
+    选择 0（LOW），1（MEDIUM），2（STRONG）其中一种，选择 2 需要提供密码字典文件
+    validate_password_policy=0
+
+    如果不需要密码策略，添加 my.cnf 文件中添加如下配置禁用即可：
+
+    validate_password = off
+
+    重新启动 mysql 服务使配置生效：
+    systemctl restart mysqld
+
+8.  远程管理mysql  添加 mysql 远程登录用户
+
+    
+

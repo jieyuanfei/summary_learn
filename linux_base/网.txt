@@ -1,0 +1,43 @@
+exit 退出程序
+
+1. 修改网卡
+    vi /etc/sysconfig/network-scripts/ifcfg-ens33
+nobook="yes"
+
+2. 重启
+service network restart
+
+3. 查看ip
+ip addr show
+
+4. 创建文件
+touch a.txt
+
+5. 查看目录细节
+ls 
+ls -l
+ls xx/ 查看对应文件下文件列表详情
+
+6. 当前目录
+pwd
+cd /etc  直接进入某个目录
+cd -  最近使用过的目录
+
+7. 查看 ifonfig 在那个包
+yum search ifconfig 
+在 net-tools里面, 则可以安装 yum install net-tools 来安装，以此使用 ifonfig
+
+8. 查看历史输入的命令
+history
+
+9. mac 配置文件 vim ~/.zshrc
+
+10. 目录说明
+    root目录   超级权限root主目录
+    home目录   系统默认的用户主目录，如果添加用户是不指定的用户主目录，默认在/home创建同名文件夹
+
+11. mnt opt home root 练习文件
+
+12  查看一个软件是否安装
+    yum list installed | grep httpd
+    rpm -ql httpd

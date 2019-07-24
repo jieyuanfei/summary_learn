@@ -1,0 +1,24 @@
+Linux(Centos7)中安装配置使用 Redis
+1.  yum search redis
+    yum info redis
+
+2.  安装 epel 仓库
+    yum install epel-release -y
+    yum info redis
+    yum install redis -y
+
+3.  安装完毕后，使用下面的命令启动 redis 服务
+    systemctl start redis
+    systemctl restart redis
+    systemctl enable redis
+
+4.  linux 上面进入 Redis 客户端
+    redis-cli
+
+5.  修改 redis 端口
+    find / -name redis.conf
+    /etc/redis.conf
+    在此文件下可以修改 redis 端口和密码
+
+    修改完端口和密码
+    systemctl restart redis 

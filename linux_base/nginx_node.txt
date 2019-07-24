@@ -1,0 +1,93 @@
+1.  先关闭 SELINUX
+    vi /etc/selinux/config
+    把 SELINUX = disabled 修改即为关闭
+
+2.  第一步:
+    找到 linux 的配置文件
+    find / -name nginx.conf
+    结果: /etc/nginx/nginx.conf
+
+    第二步:
+        cat /etc/nginx/nginx.conf
+    可以看到 nginx 里面的所有配置文件来源
+    include /etc/nginx/conf/*.conf
+
+    第三步:
+        cd /etc/nginx/conf
+    默认只有一个 default.conf 文件, 内容如下:
+server {
+    listen       80;                                        端口号
+    server_name  localhost;                                 监听本地，可以修改域名
+
+    #charset koi8-r;
+    #access_log  /var/log/nginx/host.access.log  main;
+
+    location / {
+        root   /usr/share/nginx/html;                       默认加载的文件
+        index  index.html index.htm;
+    }
+
+    #error_page  404              /404.html;
+
+    # redirect server error pages to the static page /50x.html
+    #
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+
+    # proxy the PHP scripts to Apache listening on 127.0.0.1:80
+    #
+    #location ~ \.php$ {
+    #    proxy_pass   http://127.0.0.1;
+    #}
+
+    # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
+    #
+    #location ~ \.php$ {
+    #    root           html;
+    #    fastcgi_pass   127.0.0.1:9000;
+    #    fastcgi_index  index.php;
+    #    fastcgi_param  SCRIPT_FILENAME  /scripts$fastcgi_script_name;
+    #    include        fastcgi_params;
+    #}
+
+    # deny access to .htaccess files, if Apache's document root
+    # concurs with nginx's one
+    #
+    #location ~ /\.ht {
+    #    deny  all;
+    #}
+}
+
+    备注: localhost /
+    设置文件
+        #设置主机头和客户端真实地址，以便服务器获取客户端真实 IP
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        #禁用缓存
+        proxy_buffering off;
+        proxy_pass http://127.0.0.1:3002;
+
+    备注: 用到的 conf 配置文件是
+    www_aaa_com.conf
+    www_bbb_com.conf
+
+3.  查看 ningx 是否配置成功
+    nginx -t
+
+4.  配置 firewalld 开启 80 端口
+    firewall-cmd --zone=public --list-ports
+    firewall-cmd --zone=public --add-port=80/tcp --permanent
+    重新载入:
+    firewall-cmd --reload
+
+    删除
+    firewall-cmd --zone= public --remove-port=3306/tcp --permanent
+
+5.  重启 nginx
+    systemctl restart nginx 
+    nginx -t 看配置是否正确 
+    systemctl stop nginx 
+    systemctl start nginx
