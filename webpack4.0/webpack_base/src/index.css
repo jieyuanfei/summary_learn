@@ -1,0 +1,3 @@
+.nav:nth-of-type(odd){
+    background-color: aquamarine;
+}

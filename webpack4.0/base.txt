@@ -1,0 +1,262 @@
+一, entry 与 output 配置
+1.  多文件打包
+    entry: {
+		main: './src/index.js',
+		sub: './src/index.js',
+	},
+    output: {
+        publicPath: "www.cdn.com",
+		filename: '[name].js',
+		path: path.resolve(__dirname, 'dist')
+	}
+    备注: 
+        a.  output 中 [name] 属性就是 entry 中的属性名
+        b.  publicPath 打包的文件会添加此前缀
+
+2.  sourceMap
+    a. 背景介绍:
+        举例 src index.js 第一行 console 写成 consele
+        则执行代码时报错
+        使用 sourceMap
+        它是一个映射关系，它知道 dist 目录下 main.js 文件的 96 行实际上是对应 src 目录下 index.js 文件中的第一行
+    b. 开启 
+        devtool: 'source-map'
+        在 dist 文件会自动生成一个 main.js.map 文件，此文件是 源码与main.js 之间的对应关系
+        
+        devtool: 'inline-source-map'
+        会把 main.js.map 文件自动生成到 mian.js 文件里面
+        报错具体精确到 第几行第几列
+
+        devtool: 'cheap-inline-source-map'
+        会把 main.js.map 文件自动生成到 mian.js 文件里面
+        只具体到 第几行，打包速度比 'inline-source-map' 快
+
+        devtool: 'cheap-module-inline-source-map'
+        不仅打包 业务代码，还会把第三方依赖的文件也打包进来(控制报错)
+
+        devtool: 'eval'
+        打包文件直接指向源码
+        实例如下:
+        eval("console.los(\"hello world\");//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiLi9zcmMvaW5kZXguanMuanMiLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8vLi9zcmMvaW5kZXguanM/YjYzNSJdLCJzb3VyY2VzQ29udGVudCI6WyJjb25zb2xlLmxvcyhcImhlbGxvIHdvcmxkXCIpOyJdLCJtYXBwaW5ncyI6IkFBQUEiLCJzb3VyY2VSb290IjoiIn0=\n//# sourceURL=webpack-internal:///./src/index.js\n");
+
+        综上所述:
+        development:
+            devtool: 'cheap-module-eval-source-map'
+        production:
+            devtool: 'cheap-module-source-map' 
+
+
+二, loader 配置
+1.  css-loader 与 style-loader 之间的关系
+    a.  css-loader 会找出 css 文件之间的关系
+        @import './xxx.css';    引入文件
+    b.  把打包的 css 文件挂载在 head 里面
+    备注: 引入时 css-loader 要在 style-loader 后面
+
+    从下到上，从左到右
+    scss-loader 加载顺序, 翻译成 css 文件， 在启用 css-loader, 最后启用 style-loader
+
+    postcss-loader 自动添加前缀，以兼容各个浏览器的差异
+
+2.  file-loader 与 url-loader 之间的关系
+    a. url-loader 的配置文件 options 中有 limit 限制,
+    当配置的图片大小小于 limit 时， 会把他打包成 base64
+    当配置的图片大小大于 limit 时， 会和 file-loader 一样
+    b. file-loader 则主要是处理文件，转移图片打包位置
+
+    备注: 阿里 iconfont 图标库
+    https://www.iconfont.cn
+    a.  登录账号
+    b.  图标管理   ->   我的项目    ->     新建项目
+    c.  图标库里面找到自己对应的图标    ->     加入购物车       ->      点击右上角购物车    
+        ->  把自己选中的图标添加至刚新建的项目
+    d.  图标管理   ->   我的项目    ->     下载 zip 文件(自己刚选的图标) 
+
+    重点: 对于 css 整体打包参考官网
+    https://webpack.js.org/guides/  ->  AssetManagement 
+
+
+三, plugins 配置
+1.  plugins
+    a.  生成模板文件 (打包之后运行)
+    可以在 webpack 运行到某个时刻，帮做一些事情
+    html-webpack-plugin
+    b.  删除打包文件 (打包之前运行)
+    clean-webpack-plugin
+
+
+四, devServer 配置
+1.  自自动监听文件变化
+    webpack --watch 
+
+2.  官方自带
+    自动监听文件变化, 自动打开浏览器
+    devServer
+    {
+        hot: true, 		// 方便调试 css js
+		hotOnly: true	// 不人浏览器自动刷新
+    }
+
+3.  require('webpack-dev-middleware');
+    代码如下:
+        const express = require('express');
+        const webpack = require('webpack');
+        const webpackDevMiddleware = require('webpack-dev-middleware');
+        const config = require('./webpack.config');
+        const complier = webpack(config);   // 编译器
+        let app = express();
+        app.use(webpackDevMiddleware(complier, {
+            publicPath: config.output.publicPath
+        }));
+        app.listen(3232, () => {
+            console.log('server is running');
+        });
+
+
+五, babel用法
+    官网地址: https://www.babeljs.cn/docs/babel-polyfill
+    import "@babel/polyfill"; 
+    {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        loader: "babel-loader",
+        options: {
+            /**
+                * @babel/polyfill
+                * 按需加载 把 箭头函数，promise 转换成支持低版本 的语法
+                */
+            presets: [["@babel/preset-env", {
+                useBuiltIns: 'usage'
+            }]]
+        }
+    }
+
+
+六, Tree Shaking ( import require  )
+    6.1 import 属于 module 类型，静态文件， Tree Shaking 只支持 ES Module
+    比如 math.js 文件下 
+        export add = () => {}
+        export max = () => {}
+    当在另一个文件中使用 import { add } from './math' 时， 会加载整个 math.js 文件；
+    webpack 打包后代码
+    /*! exports provided: add, minus */
+
+    6.2 按需加载
+    a. 如果在 package.json 中配置 "sideEffects": false, 
+    b. 在 webpack.config.js 中 配置
+        optimization: {
+            usedExports: true
+        },
+    则 webpack 打包时，只会加载 export add = () => {} 函数
+    webpack 打包后代码
+        /*! exports provided: add, minus */
+        /*! exports used: add */
+
+    总上所述:
+        在开发环境一般使用 6.1， 如果不使用，则破坏了对应行数
+        在生成环境一般使用 6.2， 减少代码体积
+
+    require 属于 commonJS 类型， 动态文件，整体打包
+
+
+七, development 和 production 模式区别
+
+
+八, 代码分割
+    webpack 代码分割的两种方式
+    1. 同步分割:
+    只需要在 webpack.config.js 中做 optimization 的配置即可
+    optimization: {
+		splitChunks: {
+			chunks: 'all'
+		}
+	}
+
+    2. 异步代码
+    无需做任何配置，会自动进行代码分割， 在 .babelrc 中配置
+    "plugins": [
+		"@babel/plugin-syntax-dynamic-import"
+	]
+    import(/*webpackChunkName:"lodash" */'lodash')
+
+    等核心代码加载完毕之后，在加载以下代码
+    import(/* webpackPrefetch: true */ 'LoginModal');
+
+    2.1 异步代码
+        splitChunks: {
+            chunks: 'all',
+            minSize: 30000,     //   引入的模板 
+            maxSize: 0,
+            minChunks: 1,
+            maxAsyncRequests: 5,
+            maxInitialRequests: 3,
+            automaticNameDelimiter: '~',
+            name: true,
+            cacheGroups: {      //  对同步代码起作用
+                vendors: {
+                    test: /[\\/]node_modules[\\/]/,
+                    priority: -10,
+                    filename: "vendors.js"
+                },
+                default: false
+            }
+        }
+    把 node_modules 文件单独打包
+
+
+九, 懒加载
+    1. Lazy loading 举例说明:
+    代码如下:
+    async function getComponent() {
+        const { default: _ } = await import(/*webpackChunkName:"lodash" */'lodash');
+        const element = document.createElement('div');
+        element.innerHTML = _.join(['Dell', 'Lee'], '-');
+        return element;
+    }
+    document.addEventListener('click', () => {
+        getComponent().then(element => {
+            document.body.appendChild(element);
+        })
+    })
+    备注:
+        只有在点击 document 时，才会加载 loader.js 文件
+
+    2. chunk 是什么?
+
+十, 打包分析
+    官网地址: https://github.com/webpack/analyse
+    官网地址: https://webpack.docschina.org/guides/code-splitting/#bundle-%E5%88%86%E6%9E%90-bundle-analysis-
+
+
+十一,CSS 文件的分割
+    require("mini-css-extract-plugin");
+    require("optimize-css-assets-webpack-plugin");
+
+
+十二,往模板文件添加第三方文件, 提高打包速度
+    add-asset-html-webpack-plugin
+    new addAssetHtmlWebpackPlugin({
+        filepath: path.resolve(__dirname, '../dll/vendors.dll.js')
+    })
+
+    new webpack.DllReferencePlugin({})
+
+
+十三,webpack 代码调试
+    "debug": "node --inspect --inspect-brk node_modules/webpack/bin/webpack.js"
+    运行该命令
+    npm run debug
+
+    1. 在 chomre 浏览器控制台左上角打开会看到一个 node 标志，点击即可调试 node
+    2. 在 node 代码中 debugger, 即可调试打断点的代码
+    chomre 控制台 点击 watch 中的 "+", 输入要查询的属性名, 即可查询该属性下所有的 属性和方法
+
+十四,mac 控制台代码高亮
+    npm install cli-highlight -g
+
+    运行命令, 代码高亮
+    node bundler.js | highlight
+
+
+前端优化
+    代码覆盖率
